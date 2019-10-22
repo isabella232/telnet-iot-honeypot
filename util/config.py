@@ -12,19 +12,19 @@ class Config:
 		try:
 			self.userconfig = self.loadyaml("config.yaml")
 		except:
-			print "Warning: Cannot load config.yaml"
+			print("Warning: Cannot load config.yaml")
 			self.userconfig = {}
 
 	def loadyaml(self, filename):
 		with open(filename, "rb") as fp:
 			string = fp.read()
-			return yaml.load(string)
+			return yaml.load(string, Loader=yaml.FullLoader)
 		
 	def loadUserConfig(self, filename):
 		try:
 			self.userconfig = self.loadyaml(filename)
 		except:
-			print "Warning: Cannot load " + str(filename)
+			print("Warning: Cannot load " + str(filename))
 	
 	def get(self, key, optional=False, default=None):
 		if key in self.userconfig:

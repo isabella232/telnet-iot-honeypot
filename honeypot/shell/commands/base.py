@@ -1,7 +1,7 @@
 import sys
 import traceback
 
-from binary import run_binary
+from .binary import run_binary
 
 class Proc:
     procs = {}
@@ -86,7 +86,7 @@ copyright notices.
 Usage: busybox [function [arguments]...]
 
 Currently defined functions:
-    """ + " ".join(Proc.procs.keys()) + "\n\n")
+    """ + " ".join(list(Proc.procs.keys())) + "\n\n")
             return 0
 
         name = args[0]
@@ -141,7 +141,7 @@ class Rm(Proc):
 class Ls(Proc):
 
     def run(self, env, args):
-        for f in env.listfiles().keys():
+        for f in list(env.listfiles().keys()):
             env.write(f + "\n")
         return 0
 
@@ -212,8 +212,8 @@ Proc.register("ps",      StaticProc(
 
 # Other files
 
-from wget  import Wget
-from shell import Shell
+from .wget  import Wget
+from .shell import Shell
 
 # tftp disabled
 #from tftp import Tftp

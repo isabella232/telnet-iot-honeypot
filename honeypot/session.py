@@ -12,9 +12,9 @@ import errno
 from util.dbg    import dbg
 from util.config import config
 
-from sampledb_client import SessionRecord
+from .sampledb_client import SessionRecord
 
-from shell.shell import Env, run
+from .shell.shell import Env, run
 
 MIN_FILE_SIZE = 128
 PROMPT = " # "

@@ -5,11 +5,11 @@ import struct
 import json
 import time
 import socket
-import urlparse
+import urllib.parse
 import random
 
-import additionalinfo
-import ipdb.ipdb
+from . import additionalinfo
+from backend import ipdb
 
 from sqlalchemy import desc, func, and_, or_
 from decorator import decorator
@@ -17,10 +17,10 @@ from functools import wraps
 from simpleeval import simple_eval
 from argon2 import argon2_hash
 
-from db import get_db, filter_ascii, Sample, Connection, Url, ASN, Tag, User, Network, Malware, IPRange, db_wrapper
-from virustotal import Virustotal
+from .db import get_db, filter_ascii, Sample, Connection, Url, ASN, Tag, User, Network, Malware, IPRange, db_wrapper
+from .virustotal import Virustotal
 
-from cuckoo import Cuckoo
+from .cuckoo import Cuckoo
 
 from util.dbg import dbg
 from util.config import config
@@ -98,7 +98,7 @@ class ClientController:
 		if self.session.query(IPRange.ip_min).count() != 0:
 			return
 		
-		print "Filling IPRange Tables"
+		print("Filling IPRange Tables")
 		
 		asntable = ipdb.ipdb.get_asn()
 		progress = 0
@@ -108,7 +108,7 @@ class ClientController:
 			if progress % 1000 == 0:
 				self.session.commit()
 				self.session.flush()
-				print str(100.0 * float(row[0]) / 4294967296.0) + "% / " + str(100.0 * progress / 3315466) + "%" 
+				print(str(100.0 * float(row[0]) / 4294967296.0) + "% / " + str(100.0 * progress / 3315466) + "%") 
 			
 			ip = IPRange(ip_min = int(row[0]), ip_max=int(row[1]))
 			
@@ -135,7 +135,7 @@ class ClientController:
 				# Dont add session if we cannot find an asn for it
 				self.session.add(ip)
 		
-		print "IPranges loaded"
+		print("IPranges loaded")
 		
 	@db_wrapper
 	def get_ip_range_offline(self, ip):
@@ -176,7 +176,7 @@ class ClientController:
 			return self.get_ip_range_offline(ip)
 		
 	def get_url_info(self, url):
-		parsed = urlparse.urlparse(url)
+		parsed = urllib.parse.urlparse(url)
 		host   = parsed.netloc.split(':')[0]
 		
 		if host[0].isdigit():
@@ -214,7 +214,7 @@ class ClientController:
 				else:
 					network.nb_firstconns = 0
 					
-				print "Net " + str(network.id) + ": " + str(network.nb_firstconns)
+				print("Net " + str(network.id) + ": " + str(network.nb_firstconns))
 	
 	@db_wrapper
 	def put_session(self, session):

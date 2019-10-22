@@ -22,10 +22,10 @@ def import_file(fname):
 			obj  = json.loads(line)
 			if obj["type"] == "connection":
 				if obj["ip"] != None:
-					print "conn   " + obj["ip"]
+					print("conn   " + obj["ip"])
 					client.put_session(obj)
 			if obj["type"] == "sample":
-				print "sample " + obj["sha256"]
+				print("sample " + obj["sha256"])
 				client.put_sample_info(obj)
 				
 def rerun_file(fname):
@@ -63,11 +63,11 @@ if __name__ == "__main__":
 		if arg == "-c":
 			if i+1 < len(sys.argv):
 				configFile = sys.argv[i+1]
-				print "Using config file " + configFile
+				print("Using config file " + configFile)
 				i += 1
 				continue
 			else:
-				print "warning: expected argument after \"-c\""
+				print("warning: expected argument after \"-c\"")
 		else:
 			action = arg
 			
@@ -89,5 +89,5 @@ if __name__ == "__main__":
 	elif action == "shell":
 		test_shell()
 	else:
-		print "Command " + action + " unknown."
+		print("Command " + action + " unknown.")
 

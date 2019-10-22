@@ -4,7 +4,7 @@ import struct
 import select
 
 def dbg(s):
-    print s
+    print(s)
 
 def run_binary(data, fname, args, env):
     dbg("Parsing binary file " + fname + " (" + str(len(data)) + " bytes)")

@@ -3,9 +3,9 @@ import socket
 import traceback
 import time
 
-from thread import start_new_thread
+from _thread import start_new_thread
 
-from session import Session
+from .session import Session
 from util.dbg import dbg
 from util.config import config
 
@@ -204,10 +204,10 @@ class TelnetSess:
 		#	dbg("SEND " + str(Telnetd.cmds[byte]))
 		#else:
 		#	dbg("SEND " + str(byte))
-		self.sock.send(chr(byte))
+		self.sock.send( bytearray((byte,)) )
 
 	def send_string(self, msg):
-		self.sock.send(msg)
+		self.sock.send( bytearray(msg,'ascii') ) #bytearray((msg,))
 		#dbg("SEND STRING LEN" + str(len(msg)))
 
 	def recv(self):

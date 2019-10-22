@@ -1,8 +1,8 @@
 import sys
 import traceback
 
-from grammar       import parse, TreeNode
-from commands.base import Proc
+from .grammar       import parse, TreeNode
+from .commands.base import Proc
 
 def filter_ascii(string):
 	string = ''.join(char for char in string if ord(char) < 128 and ord(char) > 32 or char in " ")
@@ -81,7 +81,7 @@ class Env:
 		if event in self.events:
 		    self.events[event](data)
 		else:
-		    print("WARNING: Event '" + event + "' not registered")
+		    print(("WARNING: Event '" + event + "' not registered"))
 		    
 	def listfiles(self):
 		return self.files
@@ -184,7 +184,7 @@ class CommandList:
                 return ret            
             return self.cmd2.run(env)
         else:
-            print "WARN: Bad Mode"
+            print("WARN: Bad Mode")
             return 1
         
     def isnone(self):
@@ -250,7 +250,7 @@ class Actions(object):
             elif operator == "<":
                 c.redirect_from(filename)
             else:
-                print "WARNING: unsupported redirect operator " + operator
+                print("WARNING: unsupported redirect operator " + operator)
                 
         return c
     
@@ -258,13 +258,13 @@ class Actions(object):
         return elements[2]
     
     def make_args(self, input, start, end, elements):
-        if isinstance(elements[0], basestring): 
+        if isinstance(elements[0], str): 
             r = [ elements[0] ]
         else:
             r = []
         
         for arg in elements[1].elements:
-            if isinstance(arg.elements[1], basestring):
+            if isinstance(arg.elements[1], str):
                 r.append(arg.elements[1])
         
         c = Command(r)

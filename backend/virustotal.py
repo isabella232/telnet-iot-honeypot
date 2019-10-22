@@ -1,7 +1,7 @@
 import requests
 import time
-import db
-import Queue
+from . import db
+import queue
 
 from util.config import config
 
@@ -17,11 +17,11 @@ class Virustotal:
 		self.user_agent = "Telnet Honeybot Backend"
 		self.engines    = ["DrWeb", "Kaspersky", "ESET-NOD32"]
 		
-		self.queue      = Queue.Queue()
+		self.queue      = queue.Queue()
 		self.timeout    = 0
 
 	def req(self, method, url, files=None, params=None, headers=None):
-		print "VT " + url
+		print("VT " + url)
 		r = None
 		if method == "GET":
 			r = requests.get(url, files=files, params=params, headers=headers)
@@ -78,7 +78,7 @@ class Virustotal:
 			for e in self.engines:
 				if r["scans"][e] and r["scans"][e]["detected"]:
 					return r["scans"][e]["result"]
-			for e,x in r["scans"].iteritems():
+			for e,x in r["scans"].items():
 				if x["detected"]:
 					return x["result"]
 			return None

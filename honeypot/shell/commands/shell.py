@@ -1,4 +1,4 @@
-from base import Proc
+from .base import Proc
 
 class Shell(Proc):
     

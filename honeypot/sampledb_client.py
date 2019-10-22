@@ -1,4 +1,4 @@
-import client
+from . import client
 import time
 import traceback
 import os
@@ -84,7 +84,7 @@ class SessionRecord:
 			"pass"          : self.password,
 			"date"          : self.date,
 			"stream"        : self.stream,
-			"samples"       : map(lambda sample: sample.json(), self.urls),
+			"samples"       : [sample.json() for sample in self.urls],
 		}
 
 	def addInput(self, text):

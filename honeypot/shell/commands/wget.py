@@ -2,16 +2,16 @@
 import requests
 import traceback
 import datetime
-import urlparse
+import urllib.parse
 
 from util.config import config
 
-from base     import Proc
+from .base     import Proc
 
 class Wget(Proc):
 
 	def dl(self, env, url, path=None, echo=True):
-		u = urlparse.urlparse(url)
+		u = urllib.parse.urlparse(url)
 		
 		host  = u.hostname
 		ip    = "127.0.0.1"
@@ -51,12 +51,12 @@ class Wget(Proc):
 				info = ""
 				for his in r.history:
 					info = info + "HTTP " + str(his.status_code) + "\n"
-					for k,v in his.headers.iteritems():
+					for k,v in his.headers.items():
 						info = info + k + ": " + v + "\n"
 						info = info + "\n"
 
 				info = info + "HTTP " + str(r.status_code) + "\n"
-				for k,v in r.headers.iteritems():
+				for k,v in r.headers.items():
 					info = info + k + ": " + v + "\n"
 			except requests.ConnectTimeout as e:
 				data = None

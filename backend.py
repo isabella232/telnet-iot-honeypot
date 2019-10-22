@@ -5,17 +5,17 @@ import traceback
 from util.config import config
 
 if len(sys.argv) > 1 and sys.argv[1] == "cleardb":
-	print "This will DELETE ALL DATA except users and cached asn data"
-	print "from the database currently used at:"
-	print ""
-	print "    " + config.get("sql")
-	print ""
-	print "If you really want to DELETE ALL DATA, type 'delete' and press enter."
-	print ""
+	print("This will DELETE ALL DATA except users and cached asn data")
+	print("from the database currently used at:")
+	print("")
+	print("    " + config.get("sql"))
+	print("")
+	print("If you really want to DELETE ALL DATA, type 'delete' and press enter.")
+	print("")
 	doit = sys.stdin.readline()
-	print ""
+	print("")
 	if doit.strip() != "delete":
-		print "ABORTED"
+		print("ABORTED")
 		sys.exit(0)
 
 	from backend.db import delete_everything
@@ -43,7 +43,7 @@ if len(sys.argv) > 2 and sys.argv[1] == "import":
 	else:
 		username = config.get("backend_user")
 
-	print "Importing " + fname + " as user " + username
+	print("Importing " + fname + " as user " + username)
 
 	with open(fname, "rb") as fp:
 		ctrl = ClientController()
@@ -52,25 +52,25 @@ if len(sys.argv) > 2 and sys.argv[1] == "import":
 			obj  = json.loads(line)
 
 			if obj["ip"] != None and obj["date"] >= 1515899912:
-				print "conn   " + obj["ip"] + " date " + str(obj["date"])
+				print("conn   " + obj["ip"] + " date " + str(obj["date"]))
 				obj["backend_username"] = username
 				try:
 					ctrl.put_session(obj)
 				except:
-					print "Cannot Put Session"
-					print "----------------------------"
+					print("Cannot Put Session")
+					print("----------------------------")
 					traceback.print_exc()
-					print "----------------------------"
-					print repr(obj)
+					print("----------------------------")
+					print(repr(obj))
 					sys.exit(0)
 	sys.exit(0)
 
 if len(sys.argv) > 1:
-	print "Unknown action '" + sys.argv[1] + "'"
-	print "Available commands:"
-	print "    import file.json : imports raw og file"
-	print "    cleardb          : deletes all data from db"
-	print "To simply start the backend, use no command at all"
+	print("Unknown action '" + sys.argv[1] + "'")
+	print("Available commands:")
+	print("    import file.json : imports raw og file")
+	print("    cleardb          : deletes all data from db")
+	print("To simply start the backend, use no command at all")
 	sys.exit(0)
 
 from backend.backend import run

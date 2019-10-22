@@ -5,8 +5,8 @@ import struct
 import json
 import time
 
-import additionalinfo
-import ipdb.ipdb
+from . import additionalinfo
+from backend import ipdb
 
 from sqlalchemy import desc, func, and_, or_
 from decorator import decorator
@@ -14,10 +14,10 @@ from functools import wraps
 from simpleeval import simple_eval
 from argon2 import argon2_hash
 
-from db import get_db, filter_ascii, Sample, Connection, Url, ASN, Tag, User, Network, Malware, IPRange, db_wrapper
-from virustotal import Virustotal
+from .db import get_db, filter_ascii, Sample, Connection, Url, ASN, Tag, User, Network, Malware, IPRange, db_wrapper
+from .virustotal import Virustotal
 
-from cuckoo import Cuckoo
+from .cuckoo import Cuckoo
 
 from util.dbg import dbg
 from util.config import config
@@ -32,7 +32,7 @@ class AuthController:
 		self.checkInitializeDB()
 
 	def pwhash(self, username, password):
-		return argon2_hash(str(password), self.salt + str(username), buflen=32).encode("hex")
+		return argon2_hash(str(password), self.salt + str(username), buflen=32).hex()
 
 	@db_wrapper
 	def checkInitializeDB(self):
@@ -41,7 +41,7 @@ class AuthController:
 			admin_name = config.get("backend_user")
 			admin_pass = config.get("backend_pass")
 
-			print 'Creating admin user "' + admin_name + '" see config for password'
+			print('Creating admin user "' + admin_name + '" see config for password')
 			self.addUser(admin_name, admin_pass, 1)
 
 	@db_wrapper

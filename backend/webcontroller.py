@@ -6,18 +6,18 @@ import json
 import time
 import math
 
-import additionalinfo
-import ipdb.ipdb
+from . import additionalinfo
+from backend import ipdb
 
 from sqlalchemy import desc, func, and_, or_, not_
 from functools import wraps
 from simpleeval import simple_eval
 from argon2 import argon2_hash
 
-from db import get_db, filter_ascii, Sample, Connection, Url, ASN, Tag, User, Network, Malware, IPRange, db_wrapper, conns_conns
-from virustotal import Virustotal
+from .db import get_db, filter_ascii, Sample, Connection, Url, ASN, Tag, User, Network, Malware, IPRange, db_wrapper, conns_conns
+from .virustotal import Virustotal
 
-from cuckoo import Cuckoo
+from .cuckoo import Cuckoo
 
 from util.dbg import dbg
 from util.config import config
@@ -48,7 +48,7 @@ class WebController:
 		query = query.order_by(desc(Connection.date))
 
 		connections = query.limit(32).all()
-		return map(lambda connection : connection.json(), connections)
+		return [connection.json() for connection in connections]
 
 	@db_wrapper
 	def get_connections_fast(self):
@@ -59,8 +59,8 @@ class WebController:
 			clist.append({
 				"id": conn.id,
 				"ip": conn.ip,
-				"conns_before": map(lambda c: c.id, conn.conns_before),
-				"conns_after": map(lambda c: c.id, conn.conns_after)
+				"conns_before": [c.id for c in conn.conns_before],
+				"conns_after": [c.id for c in conn.conns_after]
 			})
 
 		return clist
@@ -87,8 +87,8 @@ class WebController:
 		ret      = network.json()
 		
 		honeypots              = {}
-		initialconnections     = filter(lambda connection: len(connection.conns_before) == 0, network.connections)
-		ret["connectiontimes"] = map(lambda connection: connection.date, initialconnections)
+		initialconnections     = [connection for connection in network.connections if len(connection.conns_before) == 0]
+		ret["connectiontimes"] = [connection.date for connection in initialconnections]
 		
 		has_infected = set([])
 		for connection in network.connections:
@@ -189,7 +189,7 @@ class WebController:
 	@db_wrapper
 	def get_malwares(self):
 		malwares = self.session.query(Malware).all()
-		return map(lambda m: m.json(), malwares)
+		return [m.json() for m in malwares]
 
 	##
 
@@ -201,7 +201,7 @@ class WebController:
 	@db_wrapper
 	def get_newest_samples(self):
 		samples = self.session.query(Sample).order_by(desc(Sample.date)).limit(16).all()
-		return map(lambda sample : sample.json(), samples)
+		return [sample.json() for sample in samples]
 
 	##
 
@@ -213,7 +213,7 @@ class WebController:
 	@db_wrapper
 	def get_newest_urls(self):
 		urls = self.session.query(Url).order_by(desc(Url.date)).limit(16).all()
-		return map(lambda url : url.json(), urls)
+		return [url.json() for url in urls]
 
 	##
 
@@ -225,7 +225,7 @@ class WebController:
 	@db_wrapper
 	def get_tags(self):
 		tags = self.session.query(Tag).all()
-		return map(lambda tag : tag.json(), tags)
+		return [tag.json() for tag in tags]
 
 	##
 
@@ -261,7 +261,7 @@ class WebController:
 			count    = c[0]
 			connhash = c[1]
 			if count > mincount:
-				ev_in = filter(lambda ev : ev["in"], json.loads(c[2]))
+				ev_in = [ev for ev in json.loads(c[2]) if ev["in"]]
 
 				if len(ev_in) >= lines:
 					ret[connhash] = {

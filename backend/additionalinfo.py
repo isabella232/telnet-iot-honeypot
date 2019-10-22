@@ -1,10 +1,10 @@
 import dns.resolver
 import ipaddress
-import urlparse
+import urllib.parse
 import re
 import traceback
 
-import ipdb.ipdb
+from backend import ipdb
 
 def filter_ascii(string):
 		string = ''.join(char for char in string if ord(char) < 128 and ord(char) > 32 or char in "\r\n ")
@@ -68,7 +68,7 @@ def get_ip4_info(ip):
 	return None
 
 def get_ip6_info(ip):
-	ip = ipaddress.ip_address(unicode(ip))
+	ip = ipaddress.ip_address(str(ip))
 	ip = list(ip.exploded.replace(":", ""))
 	
 	ip.reverse()
@@ -90,7 +90,7 @@ def get_ip_info(ip):
 	elif is_v6:
 		return get_ip6_info(ip)
 	else:
-		print("Cannot parse ip " + ip)
+		print(("Cannot parse ip " + ip))
 		return None
 
 def get_asn_info(asn):
@@ -102,7 +102,7 @@ def get_asn_info(asn):
 
 def get_url_info(url):
 	try:
-		parsed = urlparse.urlparse(url)
+		parsed = urllib.parse.urlparse(url)
 		netloc = parsed.netloc
 		ip     = None
 		
@@ -130,10 +130,10 @@ def get_url_info(url):
 	return None
 
 if __name__ == "__main__":
-	print get_ip_info("79.220.249.125")
-	print get_ip_info("2a00:1450:4001:81a::200e")
-	print get_asn_info(3320)
+	print(get_ip_info("79.220.249.125"))
+	print(get_ip_info("2a00:1450:4001:81a::200e"))
+	print(get_asn_info(3320))
 
-	print get_url_info("http://google.com")
-	print get_url_info("http://183.144.16.51:14722/.i")
-	print get_url_info("http://[::1]:14722/.i")
+	print(get_url_info("http://google.com"))
+	print(get_url_info("http://183.144.16.51:14722/.i"))
+	print(get_url_info("http://[::1]:14722/.i"))

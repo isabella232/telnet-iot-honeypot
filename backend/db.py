@@ -115,9 +115,9 @@ class Network(Base):
 	def json(self, depth=0):
 		return {
 			"id":          self.id,
-			"samples":     len(self.samples)     if depth == 0 else map(lambda i: i.sha256, self.samples),
-			"urls":        len(self.urls)        if depth == 0 else map(lambda i: i.url, self.urls),
-			"connections": len(self.connections) if depth == 0 else map(lambda i: i.id, self.connections),
+			"samples":     len(self.samples)     if depth == 0 else [i.sha256 for i in self.samples],
+			"urls":        len(self.urls)        if depth == 0 else [i.url for i in self.urls],
+			"connections": len(self.connections) if depth == 0 else [i.id for i in self.connections],
 			"firstconns":  self.nb_firstconns,
 			"malware":     self.malware.json(depth=0)
 		}
@@ -133,7 +133,7 @@ class Malware(Base):
 		return {
 			"id":          self.id,
 			"name":        self.name,
-			"networks":    map(lambda i: i.id if depth == 0 else i.json(), self.networks)
+			"networks":    [i.id if depth == 0 else i.json() for i in self.networks]
 		}
 	
 
@@ -156,11 +156,10 @@ class ASN(Base):
 			"reg": self.reg,
 			"country": self.country,
 			
-			"urls": map(lambda url : url.url if depth == 0
-			   else url.json(depth - 1), self.urls[:10]),
+			"urls": [url.url if depth == 0
+			   else url.json(depth - 1) for url in self.urls[:10]],
 			
-			"connections": None if depth == 0 else map(lambda connection :
-                connection.json(depth - 1), self.connections[:10])
+			"connections": None if depth == 0 else [connection.json(depth - 1) for connection in self.connections[:10]]
 		}
 
 class Sample(Base):
@@ -188,8 +187,7 @@ class Sample(Base):
 			"length": self.length,
 			"result": self.result,
 			"info": self.info,
-			"urls": len(self.urls) if depth == 0 else map(lambda url :
-                url.json(depth - 1), self.urls),
+			"urls": len(self.urls) if depth == 0 else [url.json(depth - 1) for url in self.urls],
 			"network": self.network_id if depth == 0 else self.network.json()
 		}
 	
@@ -266,18 +264,16 @@ class Connection(Base):
 			"longitude": self.lon,
 			"latitude":  self.lat,
 
-			"conns_before": map(lambda conn : conn.id if depth == 0
-				else conn.json(depth - 1), self.conns_before),
-			"conns_after": map(lambda conn : conn.id if depth == 0
-				else conn.json(depth - 1), self.conns_after),
+			"conns_before": [conn.id if depth == 0
+				else conn.json(depth - 1) for conn in self.conns_before],
+			"conns_after": [conn.id if depth == 0
+				else conn.json(depth - 1) for conn in self.conns_after],
 
 			"backend_user": self.backend_user.username,
 			
-			"urls": len(self.urls) if depth == 0 else map(lambda url :
-			   url.json(depth - 1), self.urls),
+			"urls": len(self.urls) if depth == 0 else [url.json(depth - 1) for url in self.urls],
 
-			"tags": len(self.tags) if depth == 0 else map(lambda tag :
-			   tag.json(depth - 1), self.tags),
+			"tags": len(self.tags) if depth == 0 else [tag.json(depth - 1) for tag in self.tags],
 		}
 
 Index('idx_conn_user_pwd', Connection.user, Connection.password)
@@ -311,8 +307,7 @@ class Url(Base):
 				(self.sample.sha256 if depth == 0
 					else self.sample.json(depth - 1)),
 				
-			"connections": len(self.connections) if depth == 0 else map(lambda connection :
-					  connection.json(depth - 1), self.connections),
+			"connections": len(self.connections) if depth == 0 else [connection.json(depth - 1) for connection in self.connections],
 			
 			"asn": None if self.asn == None else 
 				(self.asn.asn if depth == 0
@@ -337,8 +332,7 @@ class Tag(Base):
 			"name": self.name,
 			"code": self.code,
 				
-			"connections": None if depth == 0 else map(lambda connection :
-                connection.json(depth - 1), self.connections)
+			"connections": None if depth == 0 else [connection.json(depth - 1) for connection in self.connections]
 		}
 	
 	
@@ -370,11 +364,11 @@ def delete_everything():
 	spare_tables = ["users", "asn", "ipranges"]
 
 	eng.execute("SET FOREIGN_KEY_CHECKS=0;")
-	for table in Base.metadata.tables.keys():
+	for table in list(Base.metadata.tables.keys()):
 		if table in spare_tables:
 			continue
 		sql_text = "DELETE FROM " + table + ";"
-		print sql_text
+		print(sql_text)
 		eng.execute(sql_text)
 	eng.execute("SET FOREIGN_KEY_CHECKS=1;")
 

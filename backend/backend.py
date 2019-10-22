@@ -4,11 +4,11 @@ from flask_socketio import SocketIO
 
 auth = HTTPBasicAuth()
 
-from db import get_db
+from .db import get_db
 
-from clientcontroller import ClientController
-from webcontroller import WebController
-from authcontroller import AuthController
+from .clientcontroller import ClientController
+from .webcontroller import WebController
+from .authcontroller import AuthController
 
 from util.config import config
 
@@ -106,7 +106,7 @@ def put_conn():
 	session["backend_username"] = auth.username()
 
 	print("--- PUT SESSION ---")
-	print(json.dumps(session))
+	print((json.dumps(session)))
 
 	session = ctrl.put_session(session)
 	socketio.emit('session', session)
@@ -222,7 +222,7 @@ def get_newest_samples():
 @app.route("/url/<ref_enc>", methods = ["GET"])
 def get_url(ref_enc):
 	ref = base64.b64decode(ref_enc)
-	print("\"" + ref_enc + "\" decodes to \"" + ref + "\"")
+	print(("\"" + ref_enc + "\" decodes to \"" + ref + "\""))
 	
 	url = web.get_url(ref)
 	if url:
@@ -250,7 +250,7 @@ def get_connections():
 	obj          = {}
 	allowed_keys = ["ipblock", "user", "password", "ip", "country", "asn_id", "network_id"]
 	
-	for k,v in request.args.iteritems():
+	for k,v in request.args.items():
 		if k in allowed_keys:
 			obj[k] = v
 	
@@ -334,7 +334,7 @@ def run():
 	#socketio.run(app, host=config.get("http_addr"), port=config.get("http_port"))
 
 def stop():
-	print "asdasdasd"
+	print("asdasdasd")
 
 if __name__ == "__main__":
 	run()
